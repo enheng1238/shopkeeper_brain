@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>SSE 队列版演示（优化版）</title>
+    <style>
+        body {
+            padding: 20px;
+            font-family: system-ui, sans-serif;
+        }
+        #log {
+            margin-top:15px;
+            padding:10px;
+            border:1px solid #ccc;
+            min-height:260px;
+            white-space: pre-wrap;
+        }
+        button {
+            padding: 8px 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h3>SSE 异步任务演示</h3>
+    <button id="startBtn">启动任务</button>
+    <div id="log"></div>
+
+<script>
+const logDom = document.getElementById('log');
+const startBtn = document.getElementById('startBtn');
+let es = null;
+
+// 生成随机sessionId
+function makeSessionId(){
+    return 'sess_' + Math.random().toString(36).slice(2);
+}
+
+startBtn.onclick = async ()=>{
+    if(es) return;
+    logDom.innerText = '';
+    const sessionId = makeSessionId();
+    logDom.innerText += `生成会话ID：${sessionId}\n`;
+
+    // 调用submit接口启动后端任务
+    const resp = await fetch(`http://127.0.0.1:8001/submit/${sessionId}`);
+    const resJson = await resp.json();
+    logDom.innerText += `后端响应：${JSON.stringify(resJson)}\n`;
+
+    // 建立SSE连接
+    es = new EventSource(`http://127.0.0.1:8001/stream/${sessionId}`);
+
+    // 普通消息回调
+    es.onmessage = (e)=>{
+        console.log('收到SSE消息：', e.data);
+        logDom.innerText += e.data + '\n';
+    }
+
+    // ✅ 监听后端推送的done事件：任务正常完成
+    es.addEventListener('done', (e) => {
+        console.log('任务正常完成', e.data);
+        logDom.innerText += "✅ 收到完成事件，任务结束\n";
+        es.close(); // 前端主动关闭SSE，阻止浏览器自动重连
+        es = null;
+        startBtn.disabled = false;
+    });
+
+    // ❌ 只捕获网络/服务异常
+    es.onerror = (err)=>{
+        // 如果已经手动close，不再处理
+        if(!es) return;
+        console.error('SSE错误', err);
+        logDom.innerText += "❌ SSE连接异常\n";
+        es.close();
+        es = null;
+        startBtn.disabled = false;
+    }
+
+    startBtn.disabled = true;
+}
+</script>
+</body>
+</html>

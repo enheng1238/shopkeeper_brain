@@ -23,17 +23,19 @@ def node_entry(state: ImportGraphState) -> ImportGraphState:
         state["is_md_read_enabled"] = True
         state["is_pdf_read_enabled"] = False
 
-        state["md_path"] = True
-        state["pdf_path"] = False
+        state["md_path"] = local_file_path
+        state["pdf_path"] = None
     elif local_file_path.endswith(".pdf"):
         state["is_md_read_enabled"] = False
         state["is_pdf_read_enabled"] = True
 
-        state["md_path"] = False
-        state["pdf_path"] = True
+        state["md_path"] = None
+        state["pdf_path"] = local_file_path
     else:
         logger.warning(f"不支持的文件类型{local_file_path}，退出流程！")
         return state
+
+    logger.warning(f"pdf_path: {state["pdf_path"]}")
 
     # TODO 补充file_title
     """D:\pycharm_workplace\shopkeeper_brain\doc\hak180产品安全手册.pdf"""

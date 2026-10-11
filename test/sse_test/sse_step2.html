@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<script>
+  const es = new EventSource("http://127.0.0.1:8001/stream");
+
+  es.addEventListener("progress", (e) => {
+    console.log("进度事件:", e.data);
+  });
+
+  es.addEventListener("complete", (e) => {
+    console.log("完成事件:", e.data);
+    es.close();
+  });
+</script>
+</body>
+</html>

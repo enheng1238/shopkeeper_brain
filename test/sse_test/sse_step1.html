@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>步骤1：基础SSE</title>
+</head>
+<body>
+    <h3>步骤1：接收后端固定消息</h3>
+    <div id="result"></div>
+
+    <script>
+        const eventSource = new EventSource("http://127.0.0.1:8001/simple_stream");
+        const resultDom = document.getElementById("result");
+
+        eventSource.onmessage = function(event) {
+            resultDom.innerHTML += event.data + "<br>";
+        };
+    </script>
+</body>
+</html>

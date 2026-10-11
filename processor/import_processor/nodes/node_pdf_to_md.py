@@ -290,7 +290,7 @@ def step_3_download_and_extract(zip_url, local_dir_path, stem):
     # with_name() :只负责生成新路径对象，不会修改磁盘文件
     # rename() 才是真正磁盘重命名操作。  rename会删除源文件，创建新的文件，所以需要嵌套一层
     final_md_path_obj = target_md_obj.rename(target_md_obj.with_name(f"{stem}.md"))
-    logger.info(f"文件解压成功")
+    logger.info(f"文件解压成功: {final_md_path_obj}")
     return final_md_path_obj
 
 @node_log("node_pdf_to_md")
@@ -306,8 +306,10 @@ def node_pdf_to_md(state: ImportGraphState) -> ImportGraphState:
     zip_url = step_2_validate_paths(pdf_path_obj)
     logger.info(f"zip_url:{zip_url}")
     # TODO 4.下载并解压
-    step_3_download_and_extract(zip_url, local_dir_path, pdf_path_obj.stem)
-    # TODO 5.添加完成列表
+    md_path = step_3_download_and_extract(zip_url, local_dir_path, pdf_path_obj.stem)
+    # TODO 5. 更新状态
+    state['md_path'] = md_path
+    # TODO 6.添加完成列表
     add_done_task(state.get("task_id"), "node_pdf_to_md")
     return state
 

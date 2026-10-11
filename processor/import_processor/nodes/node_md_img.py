@@ -36,6 +36,7 @@ def is_supported_image(filename: str) -> bool:
 @step_log("step_1_validate_and_get_data")
 def step_1_validate_and_get_data(state):
     md_path = state.get("md_path")
+    logger.warning(f"md_path:{md_path}")
     if not md_path:
         logger.error("在状态中不存在 md_path 属性")
         raise RuntimeError("在状态中不存在 md_path 属性")
@@ -117,7 +118,7 @@ def step_2_scan_images(md_content, md_images_dir_obj)->list[tuple[str, str, tupl
 
     return images_info_list
 
-# @step_log("step_3_image_summary")
+@step_log("step_3_image_summary")
 def step_3_image_summary(images_info_list,root_folder):
     """
     调用vm模型，给图片生成摘要

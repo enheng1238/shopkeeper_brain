@@ -245,8 +245,8 @@ def _merge_chunk_content(refine_chunks):
             base_chunk = next_chunk
 
 
-        if base_chunk:
-            merge_refine_chunk.append(base_chunk)
+    if base_chunk:
+        merge_refine_chunk.append(base_chunk)
     logger.warning(f"经过merge的chunk数量: {len(merge_refine_chunk)}")
     return merge_refine_chunk
 
@@ -269,10 +269,10 @@ def step_3_refine_split_and_merge_chunks(title_chunks)->list[dict[str, Any]]:
             refine_chunks.extend(_split_chunk_content(chunk))
         else: # 直接返回
             refine_chunks.append(chunk)
-        logger.warning(f"经过精细化切割后的 refine_chunks 数量 len:{len(refine_chunks)}")
+    logger.warning(f"经过精细化切割后的 refine_chunks 数量 len:{len(refine_chunks)}")
 
         # 如果经过精细化细分之后，有些chunk的内容长度 < CHUNK_MIN (400),那么对其进行合并，但是要求合并后大小不能超过 CHUNK_MAX_SIZE (1000)
-        refine_chunks = _merge_chunk_content(refine_chunks)
+    refine_chunks = _merge_chunk_content(refine_chunks)
     return refine_chunks
 
 @step_log("step_4_padding_chunks_metadata")
@@ -284,7 +284,7 @@ def step_4_padding_chunks_metadata(refine_chunks):
             chunk["part"] = 1
     logger.info(f"完成 chunks 的元素补充，所有属性都完整")
 
-
+@step_log("step_5_backup_chunks_json")
 def step_5_backup_chunks_json(refine_chunks, md_path):
     # md_path：D:\\pycharm_workplace\\shopkeeper_brain\\output\\hak180产品安全手册\\hak180产品安全手册_new.md
     md_path:Path = Path(md_path)
