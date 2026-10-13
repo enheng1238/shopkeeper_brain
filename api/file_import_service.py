@@ -64,7 +64,9 @@ def run_graph_task(task_id:str, local_dir:str, local_file_path: str):
 
     except Exception as e:
         update_task_status(task_id, TASK_STATUS_FAILED)
-        logger.error(f"[{task_id}] LangGraph全流程执行失败，异常信息：{str(e)}", exc_info=True)
+        logger.opt(exception=True).error(
+            f"[{task_id}] LangGraph全流程执行失败，异常信息：{str(e)}"
+        )
 
 
 
