@@ -289,7 +289,7 @@ def node_item_name_confirm(state:QueryGraphState):
     history_list: list[dict] = step_2_get_history_by_session_id(session_id)
     # TODO 4. 调用大模型提取主体重写问题
     llm_dict: dict[str, Any] = step_3_call_llm_rewritten_and_extract_itemnames(history_list, original_query)
-
+    confirmed_option_dict: dict[str, list[str]] = {}
     if llm_dict.get("item_names"):
         # TODO 5. 对模型生成的主体名进行向量化查询 {"商品A"：[{"item_name":"商品a","score": 0.7}, {"item_name":"商品ab","score":0.6}]}
         milvus_dict: dict[str, list[dict]] = step_4_select_item_names_milvus(llm_dict.get("item_names"))

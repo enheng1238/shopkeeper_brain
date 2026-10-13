@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from FlagEmbedding import FlagReranker
 from common.config.reranker_config import reranker_config
 
@@ -7,7 +9,7 @@ def get_reranker_model():
     global _reranker_model  
     if _reranker_model is None:
         _reranker_model= FlagReranker(
-            model_name_or_path=reranker_config.bge_reranker_large,
+            model_name_or_path=str(Path(reranker_config.bge_reranker_large)),
             device=reranker_config.bge_reranker_device,
             use_fp16=reranker_config.bge_reranker_fp16
         )
@@ -22,4 +24,7 @@ def compute_token_number( content: str):
     reranker_model = get_reranker_model()
     tokenizer = reranker_model.tokenizer
     token_list = tokenizer.encode(content, add_special_tokens=False)
+
+    # for token in token_list:
+    #     print('@@@',token, tokenizer.decode(token))
     return len(token_list)
